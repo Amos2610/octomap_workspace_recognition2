@@ -1,0 +1,104 @@
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+
+
+def generate_launch_description():
+    cloud_topic = LaunchConfiguration("cloud_topic")
+    frame_id = LaunchConfiguration("frame_id")
+    use_camera = LaunchConfiguration("use_camera")
+    use_rviz = LaunchConfiguration("use_rviz")
+
+    octomap_layers = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("octomap_workspace_recognition2"),
+                "launch",
+                "octomap_layers.launch.py",
+            ])
+        ),
+        launch_arguments={
+            "cloud_topic": cloud_topic,
+            "frame_id": frame_id,
+        }.items(),
+    )
+
+    realsense = Node(
+        package="realsense2_camera",
+        executable="realsense2_camera_node",
+        name="camera",
+        output="screen",
+        condition=IfCondition(use_camera),
+        parameters=[{
+            "enable_color": True,
+            "enable_depth": True,
+            "pointcloud.enable": True,
+            "align_depth.enable": True,
+        }],
+    )
+
+    octomap_to_moveit_nodes = [
+        Node(
+            package="octomap_workspace_recognition2",
+            executable="octomap_to_moveit",
+            name=f"{name}_octomap_to_moveit",
+            output="screen",
+            parameters=[{
+                "source_topic": source_topic,
+                "update_period": update_period,
+                "frame_id": frame_id,
+            }],
+        )
+        for name, source_topic, update_period in [
+            ("static", "/octomap_static/octomap_binary", 1.0),
+            ("semi_static", "/octomap_semi_static/octomap_binary", 0.1),
+            ("dynamic", "/octomap_dynamic/octomap_binary", 0.01),
+        ]
+    ]
+
+    rviz = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="screen",
+        condition=IfCondition(use_rviz),
+        arguments=[
+            "-d",
+            PathJoinSubstitution([
+                FindPackageShare("octomap_workspace_recognition2"),
+                "rviz",
+                "xarm6_octomap.rviz",
+            ]),
+        ],
+    )
+
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            "cloud_topic",
+            default_value="/camera/camera/depth/color/points",
+            description="Input PointCloud2 topic from RealSense.",
+        ),
+        DeclareLaunchArgument(
+            "frame_id",
+            default_value="map",
+            description="Octomap frame.",
+        ),
+        DeclareLaunchArgument(
+            "use_camera",
+            default_value="true",
+            description="Start realsense2_camera.",
+        ),
+        DeclareLaunchArgument(
+            "use_rviz",
+            default_value="false",
+            description="Start RViz2.",
+        ),
+        realsense,
+        octomap_layers,
+        *octomap_to_moveit_nodes,
+        rviz,
+    ])

@@ -38,7 +38,7 @@ sudo apt-get install -y \
 
 ```bash
 cd ~/ros2_ws/src
-git clone -b humble https://github.com/OctoMap/octomap_mapping.git
+git clone -b ros2 https://github.com/OctoMap/octomap_mapping.git
 
 cd ~/ros2_ws
 colcon build --packages-select octomap_server
@@ -51,7 +51,7 @@ source install/setup.bash
 octomap_mapping:
   type: git
   url: https://github.com/OctoMap/octomap_mapping.git
-  version: humble
+  version: ros2
 ```
 
 ### xarm_utils_cpp（MoveIt2 Python ラッパー）
@@ -103,6 +103,16 @@ ros2 launch octomap_workspace_recognition2 full_system.launch.py
 ros2 run octomap_workspace_recognition2 autonomous_recognition
 ```
 
+### 個別ノード
+
+```bash
+ros2 run octomap_workspace_recognition2 mapping_move --pose-key mapping_static
+ros2 run octomap_workspace_recognition2 convert_octomap --ros-args \
+    -p source_topic:=/octomap_static/octomap_point_cloud_centers
+ros2 run octomap_workspace_recognition2 collision_to_moveit
+ros2 run octomap_workspace_recognition2 yolo_detection
+```
+
 ## システム構成
 
 ```
@@ -133,6 +143,7 @@ xArm6 実行
 | `/octomap_binary` | Octomap | 中継 | Octomapバイナリ表現 |
 | `/octomap_point_cloud_centers` | PointCloud2 | 中継 | 占有ボクセル中心点群 |
 | `/planning_scene` | PlanningScene | 出力 | MoveIt2へのシーン更新 |
+| `/collision_objects` | CollisionObject | 出力 | Octomap/YOLOから生成した障害物 |
 
 ## 設定ファイル
 
