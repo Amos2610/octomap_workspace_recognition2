@@ -1,0 +1,15 @@
+string schema_version
+string request_id
+string workspace_id
+string camera_name
+string map_id
+string map_path
+string frame_id
+int32 occupied_voxels
+int32 free_voxels
+int32 unknown_voxels
+float64 occupancy_ratio
+bool obstacle_detected
+float64 nearest_obstacle_distance_m
+string[] warnings
+string[] notes
