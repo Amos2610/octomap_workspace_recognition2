@@ -27,20 +27,6 @@ def generate_launch_description():
         }.items(),
     )
 
-    realsense = Node(
-        package="realsense2_camera",
-        executable="realsense2_camera_node",
-        name="camera",
-        output="screen",
-        condition=IfCondition(use_camera),
-        parameters=[{
-            "enable_color": True,
-            "enable_depth": True,
-            "pointcloud.enable": True,
-            "align_depth.enable": True,
-        }],
-    )
-
     octomap_to_moveit_nodes = [
         Node(
             package="octomap_workspace_recognition2",
@@ -79,12 +65,12 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             "cloud_topic",
-            default_value="/camera/camera/depth/color/points",
+            default_value="/camera/hand_camera/depth/color/points",
             description="Input PointCloud2 topic from RealSense.",
         ),
         DeclareLaunchArgument(
             "frame_id",
-            default_value="map",
+            default_value="world",
             description="Octomap frame.",
         ),
         DeclareLaunchArgument(
@@ -97,7 +83,6 @@ def generate_launch_description():
             default_value="false",
             description="Start RViz2.",
         ),
-        realsense,
         octomap_layers,
         *octomap_to_moveit_nodes,
         rviz,

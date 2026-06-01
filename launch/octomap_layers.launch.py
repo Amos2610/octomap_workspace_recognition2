@@ -63,20 +63,20 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             'frame_id',
-            default_value='map',
+            default_value='world',
             description='Frame ID for OctoMap',
         ),
 
         DeclareLaunchArgument('static_res', default_value='0.10'),
-        DeclareLaunchArgument('static_max_range', default_value='5.0'),
-        DeclareLaunchArgument('static_min_range', default_value='2.0'),
+        DeclareLaunchArgument('static_max_range', default_value='3.0'),
+        DeclareLaunchArgument('static_min_range', default_value='1.5'),
 
         DeclareLaunchArgument('semi_static_res', default_value='0.05'),
-        DeclareLaunchArgument('semi_static_max_range', default_value='2.0'),
-        DeclareLaunchArgument('semi_static_min_range', default_value='1.0'),
+        DeclareLaunchArgument('semi_static_max_range', default_value='1.5'),
+        DeclareLaunchArgument('semi_static_min_range', default_value='0.7'),
 
         DeclareLaunchArgument('dynamic_res', default_value='0.02'),
-        DeclareLaunchArgument('dynamic_max_range', default_value='1.0'),
+        DeclareLaunchArgument('dynamic_max_range', default_value='0.7'),
 
         octomap_server_node(
             namespace='octomap_static',

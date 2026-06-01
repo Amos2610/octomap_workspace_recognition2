@@ -62,8 +62,8 @@ class AutonomousWorkspaceRecognition:
     def run(self):
         phases = [
             ("mapping_static", "ompl"),
-            ("mapping_semi_static", "stomp"),
-            ("mapping_object", "ompl"),
+            # ("mapping_semi_static", "stomp"),
+            # ("mapping_object", "ompl"),
         ]
         for pose_key, pipeline in phases:
             ok = self.mapper.execute_poses(pose_key, pipeline=pipeline)
