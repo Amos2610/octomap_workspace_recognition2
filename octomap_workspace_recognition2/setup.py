@@ -36,6 +36,10 @@ setup(
             'collision_to_moveit = octomap_workspace_recognition2.collision_to_moveit:main',
             'autonomous_recognition = octomap_workspace_recognition2.autonomous_recognition:main',
             'yolo_detection = octomap_workspace_recognition2.yolo_detection:main',
+            'scan_workspace_action_server = octomap_workspace_recognition2.scan_workspace_action_server:main',
+            'update_planning_scene_action_server = octomap_workspace_recognition2.update_planning_scene_action_server:main',
+            'register_obstacles_action_server = octomap_workspace_recognition2.register_obstacles_action_server:main',
+            'move_and_scan_action_server = octomap_workspace_recognition2.move_and_scan_action_server:main',
         ],
     },
 )
