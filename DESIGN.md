@@ -155,14 +155,14 @@ sensor_qos = QoSProfile(
 |-----------------------------------------------------|--------------------------------------------------------|--------|----------|
 | `launch/layers_octomap.launch`                      | `launch/octomap_layers.launch.py`                      | 高     | ✅ 完了  |
 | `io/param.yaml`                                     | `io/config/scan_poses.yaml`                            | 高     | ✅ 完了  |
-| `scripts/node/mapping_move.py`                      | `octomap_workspace_recognition2/mapping_move.py`       | 高     | ⬜ 未着手 |
-| `scripts/node/convert_octomap_to_collision_object.py` | `octomap_workspace_recognition2/convert_octomap.py`  | 高     | ⬜ 未着手 |
-| `scripts/node/publish_octomap_to_moveit.py`         | `octomap_workspace_recognition2/octomap_to_moveit.py`  | 高     | ⬜ 未着手 |
-| `scripts/node/publish_collision_object_to_moveit.py`| `octomap_workspace_recognition2/collision_to_moveit.py`| 高     | ⬜ 未着手 |
-| `scripts/autonomous_workspace_recognition.py`       | `octomap_workspace_recognition2/autonomous_recognition.py` | 高 | ⬜ 未着手 |
-| `scripts/node/yolo_to_collision_object.py`          | `octomap_workspace_recognition2/yolo_detection.py`     | 中     | ⬜ 未着手 |
-| `launch/full_system.launch`                         | `launch/full_system.launch.py`                         | 中     | ⬜ 未着手 |
-| `launch/xarm6_bringup.launch`                       | `launch/xarm6_bringup.launch.py`                       | 中     | ⬜ 未着手 |
+| `scripts/node/mapping_move.py`                      | `octomap_workspace_recognition2/mapping_move.py`       | 高     | ✅ 完了  |
+| `scripts/node/convert_octomap_to_collision_object.py` | `octomap_workspace_recognition2/convert_octomap.py`  | 高     | ✅ 完了  |
+| `scripts/node/publish_octomap_to_moveit.py`         | `octomap_workspace_recognition2/octomap_to_moveit.py`  | 高     | ✅ 完了  |
+| `scripts/node/publish_collision_object_to_moveit.py`| `octomap_workspace_recognition2/collision_to_moveit.py`| 高     | ✅ 完了  |
+| `scripts/autonomous_workspace_recognition.py`       | `octomap_workspace_recognition2/autonomous_recognition.py` | 高 | ✅ 完了  |
+| `scripts/node/yolo_to_collision_object.py`          | `octomap_workspace_recognition2/yolo_detection.py`     | 中     | ✅ 初期実装 |
+| `launch/full_system.launch`                         | `launch/full_system.launch.py`                         | 中     | ✅ 完了  |
+| `launch/xarm6_bringup.launch`                       | `launch/xarm6_bringup.launch.py`                       | 中     | ✅ 完了  |
 
 ### 3.2 mapping_move.py の移行
 

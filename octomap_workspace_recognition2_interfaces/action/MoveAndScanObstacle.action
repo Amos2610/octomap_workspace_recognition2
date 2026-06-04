@@ -1,0 +1,20 @@
+# Move robot to specified joints or pose, wait for stability, then scan and register obstacles.
+string request_id
+bool use_joints
+float64[] target_joints
+geometry_msgs/Pose target_pose
+string target_pose_frame_id
+string camera_name
+float32 stability_wait_sec
+float32 joint_velocity_threshold
+bool clear_existing
+---
+bool success
+string message
+float64[] final_joints
+uint32 occupied_voxels
+string map_id
+---
+float32 progress
+string phase
+string message

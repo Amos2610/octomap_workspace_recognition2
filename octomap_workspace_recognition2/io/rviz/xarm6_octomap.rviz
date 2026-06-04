@@ -1,0 +1,24 @@
+Panels:
+  - Class: rviz_common/Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Enabled: true
+      Name: Grid
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Name: TF
+    - Class: rviz_default_plugins/RobotModel
+      Enabled: true
+      Name: RobotModel
+    - Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Name: MotionPlanning
+  Enabled: true
+  Fixed Frame: map
+  Global Options:
+    Fixed Frame: map
+Window Geometry:
+  Height: 900
+  Width: 1400

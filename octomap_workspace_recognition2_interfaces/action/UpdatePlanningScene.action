@@ -1,0 +1,13 @@
+# Apply a scanned workspace map to MoveIt PlanningScene.
+string request_id
+string map_id
+bool clear_existing
+---
+bool success
+string message
+int32 applied_objects
+bool applied_octomap
+---
+float32 progress
+string phase
+string message

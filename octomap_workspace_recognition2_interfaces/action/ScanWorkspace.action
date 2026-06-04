@@ -1,0 +1,16 @@
+# Run workspace recognition and save the scan result under a map_id.
+string request_id
+string workspace_id
+string camera_name
+float64 duration_sec
+---
+bool success
+string message
+string map_id
+string map_path
+string summary_json
+octomap_workspace_recognition2_interfaces/ScanWorkspaceSummary summary
+---
+float32 progress
+string phase
+string message

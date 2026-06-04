@@ -1,0 +1,5 @@
+int32 occupied_voxels
+int32 free_voxels
+int32 unknown_voxels
+bool obstacle_detected
+float64 occupancy_ratio

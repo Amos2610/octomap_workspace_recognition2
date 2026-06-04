@@ -1,0 +1,14 @@
+# Register the current camera view (no robot movement) as obstacle data in MoveIt planning scene.
+string request_id
+string camera_name
+bool clear_existing
+float32 capture_duration_sec
+---
+bool success
+string message
+uint32 occupied_voxels
+string map_id
+---
+float32 progress
+string phase
+string message
