@@ -62,6 +62,7 @@ class MoveAndScanActionServer(LifecycleNode):
         self.declare_parameter("frame_id", "world")
         self.declare_parameter("octomap_topic", DEFAULT_OCTOMAP_TOPIC)
         self.declare_parameter("joint_states_topic", DEFAULT_JOINT_STATES_TOPIC)
+        self.declare_parameter("octomap_wait_sec", 10.0)
 
         move_group = (
             self.get_parameter("move_group").get_parameter_value().string_value or "xarm6"
@@ -286,9 +287,13 @@ class MoveAndScanActionServer(LifecycleNode):
                 time.sleep(0.05)
 
         # --- 4. Capture and register OctoMap (via ObstacleRegistrar) ---
-        publish_fb(0.7, "scanning", "Waiting for OctoMap snapshot...")
+        # octomap_wait_sec はデフォルト10秒。カメラが断続的な環境では長めに設定する
+        octomap_wait_sec = float(
+            self.get_parameter("octomap_wait_sec").get_parameter_value().double_value
+        )
+        publish_fb(0.7, "scanning", f"Waiting for OctoMap snapshot (timeout={octomap_wait_sec:.0f}s)...")
         self._octomap_event.clear()
-        got = self._octomap_event.wait(timeout=5.0)
+        got = self._octomap_event.wait(timeout=octomap_wait_sec)
 
         if not got and self._latest_octomap is None:
             goal_handle.abort()
@@ -349,13 +354,21 @@ class MoveAndScanActionServer(LifecycleNode):
 
 
 def main(args=None):
+    import threading
     xarm_node = XArmNode("move_and_scan_xarm")
     rclpy.init(args=args)
     node = MoveAndScanActionServer(xarm_node)
     executor = MultiThreadedExecutor()
     executor.add_node(node)
-    node.trigger_configure()
-    node.trigger_activate()
+
+    def _auto_start():
+        import time
+        time.sleep(0.5)
+        node.trigger_configure()
+        node.trigger_activate()
+
+    threading.Thread(target=_auto_start, daemon=True).start()
+
     try:
         executor.spin()
     except KeyboardInterrupt:

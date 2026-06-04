@@ -205,12 +205,20 @@ class RegisterObstaclesActionServer(LifecycleNode):
 
 
 def main(args=None):
+    import threading
     rclpy.init(args=args)
     node = RegisterObstaclesActionServer()
     executor = MultiThreadedExecutor()
     executor.add_node(node)
-    node.trigger_configure()
-    node.trigger_activate()
+
+    def _auto_start():
+        import time
+        time.sleep(0.5)
+        node.trigger_configure()
+        node.trigger_activate()
+
+    threading.Thread(target=_auto_start, daemon=True).start()
+
     try:
         executor.spin()
     except KeyboardInterrupt:

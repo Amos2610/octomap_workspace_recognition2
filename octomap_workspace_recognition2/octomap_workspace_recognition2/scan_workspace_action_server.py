@@ -460,13 +460,21 @@ class ScanWorkspaceActionServer(LifecycleNode):
 
 
 def main(args=None):
+    import threading
     xarm_node = XArmNode("scan_workspace_xarm")
     rclpy.init(args=args)
     node = ScanWorkspaceActionServer(xarm_node)
     executor = MultiThreadedExecutor()
     executor.add_node(node)
-    node.trigger_configure()
-    node.trigger_activate()
+
+    def _auto_start():
+        import time
+        time.sleep(0.5)
+        node.trigger_configure()
+        node.trigger_activate()
+
+    threading.Thread(target=_auto_start, daemon=True).start()
+
     try:
         executor.spin()
     except KeyboardInterrupt:
