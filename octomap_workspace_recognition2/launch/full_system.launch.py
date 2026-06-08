@@ -10,8 +10,9 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     cloud_topic = LaunchConfiguration("cloud_topic")
     frame_id = LaunchConfiguration("frame_id")
-    use_camera = LaunchConfiguration("use_camera")
     use_rviz = LaunchConfiguration("use_rviz")
+    map_save_dir = LaunchConfiguration("map_save_dir")
+    known_cameras = LaunchConfiguration("known_cameras")
 
     octomap_layers = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -24,6 +25,20 @@ def generate_launch_description():
         launch_arguments={
             "cloud_topic": cloud_topic,
             "frame_id": frame_id,
+        }.items(),
+    )
+
+    action_servers = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare("octomap_workspace_recognition2"),
+                "launch",
+                "octomap_wp_recog_action_servers.launch.py",
+            ])
+        ),
+        launch_arguments={
+            "map_save_dir": map_save_dir,
+            "known_cameras": known_cameras,
         }.items(),
     )
 
@@ -74,16 +89,22 @@ def generate_launch_description():
             description="Octomap frame.",
         ),
         DeclareLaunchArgument(
-            "use_camera",
-            default_value="true",
-            description="Start realsense2_camera.",
-        ),
-        DeclareLaunchArgument(
             "use_rviz",
             default_value="false",
             description="Start RViz2.",
         ),
+        DeclareLaunchArgument(
+            "map_save_dir",
+            default_value="",
+            description="Base directory for saving scan maps.",
+        ),
+        DeclareLaunchArgument(
+            "known_cameras",
+            default_value="hand_camera",
+            description="Comma-separated list of known camera names.",
+        ),
         octomap_layers,
+        action_servers,
         *octomap_to_moveit_nodes,
         rviz,
     ])

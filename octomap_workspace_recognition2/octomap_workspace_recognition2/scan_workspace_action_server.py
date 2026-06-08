@@ -2,6 +2,7 @@ import json
 import math
 import os
 import threading
+import time
 import uuid
 from datetime import datetime, timezone
 
@@ -10,6 +11,7 @@ import yaml
 from ament_index_python.packages import get_package_share_directory
 from moveit_msgs.msg import PlanningScene
 from octomap_msgs.msg import Octomap
+from trajectory_msgs.msg import JointTrajectory
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -122,6 +124,8 @@ class ScanWorkspaceActionServer(LifecycleNode):
         )
         self._scene_pub = self.create_publisher(PlanningScene, scene_topic, 10)
         self._registrar = ObstacleRegistrar(self, self._scene_pub, frame_id)
+        self._stop_traj_pub = self.create_publisher(
+            JointTrajectory, '/xarm6_traj_controller/joint_trajectory', 10)
 
         self._latest_octomap: Octomap = None
         self._latest_cloud: PointCloud2 = None
@@ -226,6 +230,13 @@ class ScanWorkspaceActionServer(LifecycleNode):
     # -----------------------------------------------------------------------
     # Action callbacks
     # -----------------------------------------------------------------------
+
+    def _publish_stop_trajectory(self):
+        """現在実行中の軌道をキャンセルする（空の JointTrajectory を送信）。"""
+        msg = JointTrajectory()
+        msg.joint_names = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6']
+        self._stop_traj_pub.publish(msg)
+        self.get_logger().info("Stop trajectory published.")
 
     def _goal_callback(self, _goal_request):
         if not self._is_active:
@@ -336,8 +347,30 @@ class ScanWorkspaceActionServer(LifecycleNode):
                 publish(progress, "execution_failed", f"Pose {i + 1} execution failed, skipping")
                 continue
 
+            # execute() 完了直後にキャンセル確認（軌道送信済みだが次の移動を止める）
+            if goal_handle.is_cancel_requested:
+                self._publish_stop_trajectory()
+                goal_handle.canceled()
+                result = ScanWorkspace.Result()
+                result.success = False
+                result.message = "Scan canceled after movement."
+                return result
+
+            # OctoMap 待機中もキャンセルをポーリングで確認
             self._octomap_event.clear()
-            got = self._octomap_event.wait(timeout=per_pose_wait)
+            deadline = time.time() + per_pose_wait
+            got = False
+            while time.time() < deadline:
+                if goal_handle.is_cancel_requested:
+                    self._publish_stop_trajectory()
+                    goal_handle.canceled()
+                    result = ScanWorkspace.Result()
+                    result.success = False
+                    result.message = "Scan canceled during OctoMap wait."
+                    return result
+                if self._octomap_event.wait(timeout=0.1):
+                    got = True
+                    break
             if not got:
                 self.get_logger().warn(f"OctoMap timeout after pose {i + 1}/{total}")
 
