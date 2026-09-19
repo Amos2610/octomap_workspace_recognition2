@@ -40,6 +40,7 @@ setup(
             'update_planning_scene_action_server = octomap_workspace_recognition2.update_planning_scene_action_server:main',
             'register_obstacles_action_server = octomap_workspace_recognition2.register_obstacles_action_server:main',
             'move_and_scan_action_server = octomap_workspace_recognition2.move_and_scan_action_server:main',
+            'object_layer_action_server = octomap_workspace_recognition2.object_layer_action_server:main',
         ],
     },
 )

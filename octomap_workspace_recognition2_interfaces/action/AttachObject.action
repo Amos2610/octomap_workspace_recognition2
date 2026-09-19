@@ -1,0 +1,27 @@
+# 掴んだ物体を手先リンクに attach する（object layer）。
+#
+# 形状は呼び出し側が渡す（検出器に依存しないため）。mesh に頂点があれば mesh が
+# 優先され、無ければ primitive を使う。呼び出し側は両方載せてよい。
+# attach 後は、プランナが物体をロボットの一部として衝突検査する。
+# 放すときは DetachObject を呼ぶ。
+#
+# pose は frame_id で表す。手先リンク座標系で渡せば TF を引かずに済む。
+
+string request_id
+string object_id             # 呼び出し側が決める id。DetachObject で再利用する
+string frame_id              # pose の座標系。空ならサーバの planning_frame
+
+shape_msgs/Mesh mesh                  # 頂点 4 未満 = mesh 無し
+shape_msgs/SolidPrimitive primitive   # mesh が無いときの形（BOX を想定）
+geometry_msgs/Pose pose      # mesh / primitive のどちらにも適用
+string attach_link           # 空 = サーバの default_attach_link
+---
+bool success
+string message
+---
+float32 progress             # 0.0 - 1.0
+string phase                 # attaching / done
+                             # unknown_link: attach_link がロボットモデルに無い
+                             # bad_mesh: mesh に内容があるが壊れている（primitive に降格しない）
+                             # bad_request: object_id が空、または形状が無い
+string message

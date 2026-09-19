@@ -43,6 +43,25 @@ def generate_launch_description():
         output="screen",
     )
 
+    # 掴んだ物体を planning scene に attach / detach する object layer
+    object_layer_server = Node(
+        package="octomap_workspace_recognition2",
+        executable="object_layer_action_server",
+        name="object_layer_action_server",
+        output="screen",
+        parameters=[{
+            "default_attach_link": "link_tcp",
+            "planning_frame": "world",
+            # xArm6 のグリッパの指は可動関節なので剛体クラスタに入らない。掴んだ物体が
+            # 触れてよいリンクとして列挙する
+            "extra_touch_links": [
+                "left_finger", "right_finger",
+                "left_inner_knuckle", "right_inner_knuckle",
+                "left_outer_knuckle", "right_outer_knuckle",
+            ],
+        }],
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             "map_save_dir",
@@ -58,4 +77,5 @@ def generate_launch_description():
         update_planning_scene_server,
         register_obstacles_server,
         move_and_scan_server,
+        object_layer_server,
     ])

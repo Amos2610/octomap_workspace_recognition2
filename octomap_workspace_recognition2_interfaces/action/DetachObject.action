@@ -1,0 +1,17 @@
+# AttachObject で attach した物体を放す（object layer）。
+#
+# 放したのに detach しないと、プランナは物体を持ったままとして計画し続ける。
+# 放したら必ず呼ぶこと。
+
+string request_id
+string object_id             # AttachObject に渡した id
+bool remove_from_scene       # true: CollisionObject も削除する
+                             # false: 置いた場所にシーンへ残す
+---
+bool success
+string message
+---
+float32 progress             # 0.0 - 1.0
+string phase                 # detaching / removing / done
+                             # unknown_object: このサーバが attach していない id
+string message
