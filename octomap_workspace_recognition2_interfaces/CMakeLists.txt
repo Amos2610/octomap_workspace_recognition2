@@ -10,16 +10,19 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(action_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(shape_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/ScanWorkspace.action"
   "action/UpdatePlanningScene.action"
   "action/RegisterObstacles.action"
   "action/MoveAndScanObstacle.action"
+  "action/AttachObject.action"
+  "action/DetachObject.action"
   "msg/ScanWorkspaceSummary.msg"
   "msg/OccupancySummary.msg"
   "msg/WorkspaceRegion.msg"
-  DEPENDENCIES action_msgs builtin_interfaces geometry_msgs
+  DEPENDENCIES action_msgs builtin_interfaces geometry_msgs shape_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)
